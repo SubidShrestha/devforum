@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="align-center" style="width:70%;margin-left:auto;margin-right:auto;">
+  <div class="card" style="margin-top:10px;">
+      <div class="card-header">
+        <h3>Select contents you wish to see</h3>
+      </div>
+      <div class="card-body">
+        <form action="{% url 'select-tag' %}" method='POST'>
+          {% csrf_token %}
+          <p>Add a comma after each tag</p>
+          <div class="mt-1 mb-2 px-3 py-2 align-center">
+            {{tagform.media}}
+            <div class="mt-2">{{ tagform.tags }}</div>
+          </div>
+          <div class="mt-1 mb-2 px-3 py-2">
+            <input type='submit' class='btn btn-primary px-2 py-2' value='Submit'/>
+        </div>
+        </form>
+      </div>
+  </div>
+</div>
+
+{% endblock content %}

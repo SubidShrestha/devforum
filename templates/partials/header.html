@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <a class="navbar-brand" href="{% url 'home' %}" data-abc="true">DevForum</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li>
+                <form onsubmit="event.preventDefault()" class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search"> <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button> 
+                </form>
+            </li>
+        </ul>
+        {% if user.profile_pic %}
+            <img src="{{user.profile_pic.url}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:4%; height: 3%;" alt="">
+        {% else %}
+            <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:4%; height: 3%;" alt="">
+        {% endif %}
+    </div>
+</nav>

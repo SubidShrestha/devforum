@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% include 'partials/header.html' %}
+<div class="container-fluid wrap">
+    <div class="row mt-3">
+        {% include 'partials/left_column.html' %}
+        <div class="col col-lg-8 justify-content-center">
+            <div class="container-fluid mt-100" style="border-radius:4px;">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="card mb-4">
+                          <div class="card-header">
+                              <div class="media flex-wrap w-100 align-items-center"> 
+                                {% if question.author.profile_pic is None %}
+                                    <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                {% else %}
+                                    <img src="{{question.author.profile_pic}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                {% endif %}
+                                <div class="media-body ml-3 mt-1"> 
+                                    {% if user.id == answer.author.id %}
+                                        <a href="{% url 'profile' %}" data-abc="true">{{question.author.username}}</a>
+                                    {% else %}
+                                        <a href="{% url 'user' question.author.username %}" data-abc="true">{{question.author.username}}</a>
+                                    {% endif %}
+                                    <div class="text-muted small mt-1">
+                                        {% if question.duration.days == 0 %}
+                                            Posted: Today
+                                        {% elif question.duration.days == 1 %}
+                                            Posted: Yesterday
+                                        {% else %}
+                                            Posted: {{question.duration.days}} days ago
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="pb-1">{{question.title}}</h4>
+                            <div class="flex-wrap text-small pb-2">
+                                {% for tag in question.tags %}
+                                    <a href="#" class="badge px-1 py-1" style="font-size:16px;">{{tag}}</a>
+                                {% endfor %}
+                            </div>
+                            <div>{{question.content|safe}}</div>
+                          </div>
+                          <div class="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-2">
+                              <div class="px-4 pt-2">
+                                <a href="javascript:void(0)" class="text-success d-inline-flex align-items-center align-middle ml-1 mr-3 upvoteq" data-question={{question.id}}> <i class="fa fa-thumbs-up"></i>&nbsp; <span class="align-middle">{{question.upvotes}}</span> </a>
+                                <a href="javascript:void(0)" class="text-danger d-inline-flex align-items-center align-middle ml-2 mr-2 downvoteq" data-question={{question.id}}> <i class="fa fa-thumbs-down"></i>&nbsp; <span class="align-middle">{{question.downvotes}}</span> </a>
+                                <span class="text-muted d-inline-flex align-items-center align-middle ml-3"> <i class="fa fa-comments"></i>&nbsp; <span class="align-middle">{{question.answers}}</span> </span> </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              {% for answer in question.question_answer %}
+              <div class="row mt-3">
+                  <div class="col col-md-12">
+                        <div class="card">
+                          <div class="card-header">
+                            <div class="media flex-wrap w-100 align-items-center">
+                                {% if answer.author.profile_pic is None %}
+                                    <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                {% else %}
+                                    <img src="{{answer.author.profile_pic}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                {% endif %}
+                                <div class="media-body ml-3 mt-1"> 
+                                    {% if user.id == answer.author.id %}
+                                        <a href="{% url 'profile' %}" data-abc="true">{{answer.author.username}}</a>
+                                    {% else %}
+                                        <a href="{% url 'user' answer.author.username %}" data-abc="true">{{answer.author.username}}</a>
+                                    {% endif %}
+                                    <div class="text-muted small mt-1">
+                                        {% if answer.duration.days == 0 %}
+                                            Posted: Today
+                                        {% elif answer.duration.days == 1 %}
+                                            Posted: Yesterday
+                                        {% else %}
+                                            Posted: {{answer.duration.days}} days ago
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="card-body">
+                          <div>{{answer.content|safe}}</div>
+                        </div>
+                        <div class="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-2">
+                            <div class="px-4 pt-2">
+                              <a href="javascript:void(0)" class="text-success d-inline-flex align-items-center align-middle ml-1 mr-3 upvote-answer" data-answer={{answer.id}}> <i class="fa fa-thumbs-up"></i>&nbsp; <span class="align-middle">{{answer.upvotes}}</span> </a>
+                              <a href="javascript:void(0)" class="text-danger d-inline-flex align-items-center align-middle ml-2 mr-2 downvote-answer" data-answer={{answer.id}}> <i class="fa fa-thumbs-down"></i>&nbsp; <span class="align-middle">{{answer.downvotes}}</span> </a>
+                              <span class="text-muted d-inline-flex align-items-center align-middle ml-3"> <i class="fa fa-comments"></i>&nbsp; <span class="align-middle">{{answer.replies}}</span> </span> </div>
+                              <div class="px-4 pt-2"><a href="{% url 'answer-reply' answer.id %}" class="btn btn-primary btn-sm"><i class="fa fa-reply mr-2"></i>Reply</a> </div>
+                            </div>
+                      </div>
+                  </div>
+              </div>
+              {% empty %}
+              <div class="row mt-3">
+                <div class="col col-md-12">
+                    <div class="card text-center">
+                        <h4 class="my-2 py-2">No Answers to the question</h4>
+                    </div>
+                </div>
+              </div>
+              {% endfor %}
+              <div class="row mt-3">
+                <div class="col col-lg-12">
+                    <div class="card" style = "width:110%;">
+                        <h3 class="card-header">Submit an Answer to the question</h3>
+                        <div class="card-body">
+                            <form action="{% url 'post-reply' question.id %}" method='POST'>
+                                {% csrf_token %}
+                                {{answerform.media}}
+                                {{answerform.content}}
+                                <div class="mt-1 mb-2 px-3 py-2">
+                                    <input type='submit' class='btn btn-primary px-2 py-2' value='Submit Your Answer'/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

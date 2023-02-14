@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% include 'partials/header.html' %}
+<div class="container-fluid wrap mt-9">
+    <div class="row mt-3">
+        {% include 'partials/left_column.html' %}
+        <div class="col col-lg-6 justify-content-center">
+            {% for questions in posts %}
+            <div class="container-fluid mt-100" style="border-radius:4px;">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="card mb-4">
+                          <div class="card-header">
+
+                              <div class="media flex-wrap w-100 align-items-center"> 
+                                {% if questions.author.profile_pic is None %}
+                                    <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                {% else %}
+                                    <img src="{{questions.author.profile_pic}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                {% endif %}
+                                <div class="media-body ml-3 mt-1"> 
+                                    {% if questions.author.id == user.id %}
+                                        <a href="{% url 'profile' %}">{{ questions.author.username }}</a>
+                                    {% else %}
+                                        <a href="{% url 'user' questions.author.username %}">{{ questions.author.username }}</a>
+                                    {% endif %}
+                                    <div class="text-muted small mt-1">
+                                        {% if questions.duration.days == 0 %}
+                                            Posted: Today
+                                        {% elif questions.duration.days == 1 %}
+                                            Posted: Yesterday
+                                        {% else %}
+                                            Posted: {{questions.duration.days}} days ago
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="pb-1">{{questions.title}}</h4>
+                            <div class="flex-wrap text-small pb-2">
+                                {% for tag in questions.tags %}
+                                    <a href="#" class="badge px-1 py-1" style="font-size:16px;">{{tag}}</a>
+                                {% endfor %}
+                            </div>
+                            <div>{{questions.content|safe}}</div>
+                          </div>
+                          <div class="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-2">
+                              <div class="px-4 pt-2">
+                                <a href="javascript:void(0)" class="text-success d-inline-flex align-items-center align-middle ml-1 mr-3 upvoteq" data-question={{questions.id}}> <i class="fa fa-thumbs-up"></i>&nbsp; <span class="align-middle">{{questions.upvotes}}</span> </a>
+                                <a href="javascript:void(0)" class="text-danger d-inline-flex align-items-center align-middle ml-2 mr-2 downvoteq" data-question={{questions.id}}> <i class="fa fa-thumbs-down"></i>&nbsp; <span class="align-middle">{{questions.downvotes}}</span> </a>
+                                <span href="#" class="text-muted d-inline-flex align-items-center align-middle ml-3"> <i class="fa fa-comments"></i>&nbsp; <span class="align-middle">{{questions.answers}}</span> </span> </div>
+                              <div class="px-4 pt-2"><a href="{% url 'post-reply' questions.id %}" class="btn btn-primary btn-sm">Answer<i class="fa fa-comment mx-2"></i></a> </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+            {% endfor %}
+        </div>
+        <div class="col col-md-3" style="border-radius:4px;">
+            <div class="card d-flex">
+                <div class="card-body">
+                    <h3 class="mb-3">Suggested Users</h3>
+                    {% for item_user in users %}
+                        <div class="py-2 px-2 mx-2 mt-2 d-flex">
+                            {% if item_user.profile_pic is None %}
+                                <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:20%; height: 20%;" alt="">
+                            {% else %}
+                                <img src="{{item_user.profile_pic}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:20%; height: 20%;" alt="">
+                            {% endif %}
+                            <div class="d-block ml-2 justify-content-center">
+                                {% if item_user.id == user.id %}
+                                    <a href="{% url 'profile' %}">{{ item_user.username }}</a>
+                                {% else %}
+                                    <a href="{% url 'user' item_user.username %}">{{ item_user.username }}</a>
+                                {% endif %}
+                                <div>
+                                    {% for tag in item_user.tags %}
+                                        <div class="badge px-1 py-1">{{tag}}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
