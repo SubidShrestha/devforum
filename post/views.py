@@ -40,7 +40,11 @@ class PostListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         recommended = recommend(self.request.user,Question.objects.all())
-        query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user))
+        collab_recommend_items = collab_recommend(self.request.user,UpvoteQuestion.objects.all())
+        if(UpvoteQuestion.objects.filter(user=self.request.user).count() > 10):
+            query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user) | Q(pk__in = collab_recommend_items)).distinct()
+        else:
+            query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user)).distinct()
         return query
 
     def dispatch(self,request, *args, **kwargs):
@@ -63,11 +67,14 @@ class PostListView(generics.ListCreateAPIView):
         previous_url = request.META.get('HTTP_REFERER')
         data = request.POST
         search_term = data.get('search')
-        print(search_term)
-        question = Question.objects.filter(Q(title__icontains=search_term) | Q(tags__name__icontains=search_term))
-        user = User.objects.filter(Q(username__contains=search_term) | Q(tags__name__icontains=search_term))
-        print(question,user) 
-        return redirect(previous_url)
+        if search_term is None or search_term == '':
+            return redirect(previous_url)
+        question = Question.objects.filter(Q(title__icontains=search_term) | Q(tags__name__icontains=search_term) | Q(author__username__icontains =search_term)).distinct()
+        user = User.objects.filter(Q(username__icontains=search_term) | Q(tags__name__icontains=search_term)).distinct()
+        question_serializer = self.serializer_class(question,many=True)
+        ordered_data = sorted(question_serializer.data, key=lambda x:(x['created_at'],x['upvotes']),reverse=True)
+        user_serializer = UserSerializer(user.filter(is_superuser=False),many=True) 
+        return Response({'question_list':ordered_data,'user_list':user_serializer.data,"tags": self.request.user.tags.all()},template_name='pages/search_list.html')
 
 class PostCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -252,4 +259,3 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
-    

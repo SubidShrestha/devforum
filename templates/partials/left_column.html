@@ -1,9 +1,6 @@
 <div class="col col-md-3 h-100 bg-transparent">
     <div class="card d-flex bg-transparent border-0">
         <div class="card-body">
-            {% if user.is_authenticated %}
-                <h4>Welcome {{user.username}}</h4>
-            {% endif %}
             <nav class="navbar">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a href="{% url 'home' %}" class="nav-link text-dark"><i class="fa fa-home mx-2" ></i> Home</a></li>

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% include 'partials/header.html' %}
+<div class="container-fluid wrap py-3">
+    <div class="row mt-3" style="border-radius:4px;">
+
+        {% include 'partials/left_column.html' %}
+
+        <div class="col col-lg-9 d-flex justify-content-center">
+            <div class="container-fluid mt-100">
+                <div class="card my-2">
+                    <div class="card-header">
+                        <h3>Users</h3>
+                    </div>
+                    <div class="card-body">
+                        {% for users in user_list %}
+                            <div>
+                                <div class="d-flex w-100">
+                                    {% if users.profile_pic %}
+                                        <img src={{users.profile_pic}} alt="" style="width:8%;" class="rounded-circle">
+                                    {% else %}
+                                        <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="rounded-circle" style="width:8%;" alt="">
+                                    {% endif %}
+                                    {% if users.id == user.id %}
+                                        <div class="mx-4 mt-3"style="font-size:18px;"><a href="{% url 'profile' %}">{{users.username}}</a></div>
+                                    {% else %}
+                                        <div class="mx-4 mt-3"style="font-size:18px;"><a href="{% url 'user' users.username %}">{{users.username}}</a></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card my-2">
+                    <div class="card-header">
+                        <h3>Questions</h3>
+                    </div>
+                    <div class="card-body" >
+                        {% for questions in question_list %}
+                            <div class="card my-2">
+                                <div class="card-header">
+                                    <div class="media flex-wrap w-100 align-items-center">
+                                        {% if not questions.author.profile_pic %}
+                                            <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                        {% else %}
+                                            <img src="{{questions.author.profile_pic}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
+                                        {% endif %}
+                                        <div class="media-body media-body ml-3 mt-1">
+                                            {% if questions.author.id == user.id %}
+                                                <a href="{% url 'profile' %}">{{ questions.author.username }}</a>
+                                            {% else %}
+                                                <a href="{% url 'user' questions.author.username %}">{{ questions.author.username }}</a>
+                                            {% endif %}
+                                            <div class="text-muted small mt-1">
+                                                {% if questions.duration.days == 0 %}
+                                                    Posted: Today
+                                                {% elif questions.duration.days == 1 %}
+                                                    Posted: Yesterday
+                                                {% else %}
+                                                    Posted: {{questions.duration.days}} days ago
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="pb-1">{{questions.title}}</h4>
+                                    <div class="flex-wrap text-small pb-2">
+                                        {% for tag in questions.tags %}
+                                            <a href="#" class="badge px-1 py-1" style="font-size:16px;">{{tag}}</a>
+                                        {% endfor %}
+                                    </div>
+                                    <div>{{questions.content|safe}}</div>
+                                </div>
+                                <div class="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-2">
+                                    <div class="px-4 pt-2">
+                                      <a href="javascript:void(0)" class="text-success d-inline-flex align-items-center align-middle ml-1 mr-3 upvoteq" data-question={{questions.id}}> <i class="fa fa-thumbs-up"></i>&nbsp; <span class="align-middle">{{questions.upvotes}}</span> </a>
+                                      <a href="javascript:void(0)" class="text-danger d-inline-flex align-items-center align-middle ml-2 mr-2 downvoteq" data-question={{questions.id}}> <i class="fa fa-thumbs-down"></i>&nbsp; <span class="align-middle">{{questions.downvotes}}</span> </a>
+                                      <span href="#" class="text-muted d-inline-flex align-items-center align-middle ml-3"> <i class="fa fa-comments"></i>&nbsp; <span class="align-middle">{{questions.answers}}</span> </span> </div>
+                                    <div class="px-4 pt-2"><a href="{% url 'post-reply' questions.id %}" class="btn btn-primary btn-sm">Answer<i class="fa fa-comment mx-2"></i></a> </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
