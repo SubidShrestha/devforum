@@ -31,7 +31,7 @@ class LogoutView(View):
         )
         return HttpResponseRedirect(logout_url)
 
-class PostListView(generics.ListAPIView):
+class PostListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'pages/home.html'
@@ -40,7 +40,7 @@ class PostListView(generics.ListAPIView):
 
     def get_queryset(self):
         recommended = recommend(self.request.user,Question.objects.all())
-        query = Question.objects.filter(Q(pk__in = recommended) or Q(author = self.requst.user))
+        query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user))
         return query
 
     def dispatch(self,request, *args, **kwargs):
@@ -58,6 +58,16 @@ class PostListView(generics.ListAPIView):
         ordered_data = sorted(serialized_data, key=lambda x:(x['created_at'],x['upvotes']),reverse=True)
         user_serializer = UserSerializer(User.objects.filter(is_superuser = False),many=True)
         return Response({"posts":ordered_data,"tags": self.request.user.tags.all(),'users':user_serializer.data},template_name=self.template_name)
+    
+    def post(self,request,*args, **kwargs):
+        previous_url = request.META.get('HTTP_REFERER')
+        data = request.POST
+        search_term = data.get('search')
+        print(search_term)
+        question = Question.objects.filter(Q(title__icontains=search_term) | Q(tags__name__icontains=search_term))
+        user = User.objects.filter(Q(username__contains=search_term) | Q(tags__name__icontains=search_term))
+        print(question,user) 
+        return redirect(previous_url)
 
 class PostCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -235,13 +245,11 @@ class DownvoteAnswerView(View):
 
 class TagAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        # if not self.request.user.is_authenticated:
-        #     return Tag.objects.none()
-
         qs = Tag.objects.all().order_by('slug')
 
         if self.q:
             qs = qs.filter(name__istartswith=self.q).order_by('slug')
 
         return qs
+
+    

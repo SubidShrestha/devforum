@@ -2,8 +2,9 @@
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li>
-                <form onsubmit="event.preventDefault()" class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Search"> <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button> 
+                <form method='POST' action="{% url 'home' %}" class="form-inline my-2 my-lg-0">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="text" id = 'search' name = 'search' placeholder="Search"> <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button> 
                 </form>
             </li>
         </ul>

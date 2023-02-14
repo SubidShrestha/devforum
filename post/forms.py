@@ -2,6 +2,8 @@ from django import forms
 from ckeditor.widgets import CKEditorWidget
 from dal import autocomplete
 from .models import *
+from taggit.models import Tag
+from account.models import User
 
 class PostForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
