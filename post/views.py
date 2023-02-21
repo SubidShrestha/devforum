@@ -150,6 +150,11 @@ class PostEditView(generics.RetrieveUpdateDestroyAPIView):
         question.content = form['content'].value()
         question.save()
         return redirect('profile')
+    
+    def delete(self, request, *args, **kwargs):
+        question = get_object_or_404(self.queryset, pk=kwargs['id'])
+        question.delete()
+        return Response({'msg':'deleted'})
 
 class PostReplyView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]

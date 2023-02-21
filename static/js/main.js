@@ -21,6 +21,13 @@ $(document).ready(
             var response = await senddata(sendurl,$(this).data('answer'))
             location.reload()
         })
+        $('.delete-popup').on('show',function(e){
+            var button = $(e.relatedTarget);
+            var data = button.data('post');
+            var modal = $(this)
+            modal.find('.model-dialog .model-content .model-header .modal-title').text(121212)
+            modal.find('input').val('data')
+        })
     }
 )
 
