@@ -41,10 +41,7 @@ class PostListView(generics.ListCreateAPIView):
     def get_queryset(self):
         recommended = recommend(self.request.user,Question.objects.all())
         collab_recommend_items = collab_recommend(self.request.user,UpvoteQuestion.objects.all())
-        if(UpvoteQuestion.objects.filter(user=self.request.user).count() > 10):
-            query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user) | Q(pk__in = collab_recommend_items)).distinct()
-        else:
-            query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user)).distinct()
+        query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user)).distinct()
         return query
 
     def dispatch(self,request, *args, **kwargs):
@@ -114,6 +111,45 @@ class PostCreateView(generics.CreateAPIView):
             print(serializer.data)
             serializer.save()
         return Response({"form":PostForm(),"tags": self.request.user.tags.all()},template_name=self.template_name)
+    
+class PostEditView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = QuestionSerializer
+    renderer_classes = [TemplateHTMLRenderer]
+    queryset = Question.objects.all()
+    lookup_field = 'id'
+    template_name = 'pages/post_details.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        if user.is_authenticated:
+            if user.tags.all().count() == 0:
+                return redirect('select-tag')
+            return super(PostEditView, self).dispatch(request,*args, **kwargs)
+        else:
+            return redirect(settings.LOGIN_URL)
+        
+    def get_queryset(self):
+        query = Question.objects.filter(user = self.request.user)
+        return query
+    
+    def get(self, request, *args, **kwargs):
+        question = get_object_or_404(self.queryset, pk=kwargs['id'])
+        form = PostForm(instance=question)
+        return Response({'form':form,"tags": self.request.user.tags.all()},template_name=self.template_name)
+    
+    def post(self, request, *args, **kwargs):
+        question = get_object_or_404(self.queryset, pk=kwargs['id'])
+        form = PostForm(request.POST)
+        question.title = form['title'].value()
+        question.content = form['content'].value()
+        tags = form['tags'].value()
+        tag_list = tags.split(',')
+        for tag in tag_list:
+            question.tags.add(tag)
+        question.content = form['content'].value()
+        question.save()
+        return redirect('profile')
 
 class PostReplyView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]

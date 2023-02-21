@@ -5,6 +5,7 @@ urlpatterns = [
     path("create/", PostCreateView.as_view(),name='post-create'),
     path("signout/", LogoutView.as_view(),name='user-logout'),
     path("detail/<int:id>", PostReplyView.as_view(),name='post-reply'),
+    path("edit/<int:id>", PostEditView.as_view(),name='post-edit'),
     path("reply/<int:id>", ReplyView.as_view(),name='answer-reply'),
     path('upvote-question/',UpvoteQuestionView.as_view(),name='upvote-question'),
     path('downvote-question/',DownvoteQuestionView.as_view(),name='downvote-question'),

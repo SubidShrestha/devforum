@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% include 'partials/header.html' %}
+<div class="container-fluid wrap py-3">
+    <div class="row mt-3" style="border-radius:4px;">
+
+        {% include 'partials/left_column.html' %}
+
+        <div class="col col-lg-9 d-flex justify-content-center">
+            <div class="container-fluid mt-100">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="" method ="POST">
+                            {% csrf_token %}
+                            <div class="mb-4 px-3 py-1">
+                                <p class="mt-2 font-weight-bold" style="font-size:18px;">Title:</p>
+                                <small class="text-muted" >Be specific and imagine you're asking a question to another person.</small>
+                                <div class="my-1">{{ form.title }}</div>
+                            </div>
+                            <div class="mt-1 mb-2 px-3 py-2 align-center">
+                                <p class="mt-2 text-xl font-weight-bold" style="font-size:18px;">Details of your problem and what you have you tried/your expectations:</p>
+                                <small class="text-muted">Introduce Your Problem along with your attempts and your expected outcome.</small>
+                                {{ form.media }}
+                                <div class="mt-2">{{ form.content }}</div>
+                            </div>
+                            <div class="mt-1 mb-2 px-3 py-2 align-center">
+                                <p class="mt-2 font-weight-bold" style="font-size:18px;">Add tags to your question:</p>
+                                <div class="mt-2">{{ form.tags }}</div>
+                            </div>
+                            <div class="mt-1 mb-2 px-3 py-2">
+                                <input type='submit' class='btn btn-primary px-2 py-2' value='Edit Question' id='edit'/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

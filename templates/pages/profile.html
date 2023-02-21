@@ -4,6 +4,7 @@
 <div class="container-fluid wrap">
     <div class="row mt-3">
         {% include 'partials/left_column.html' %}
+        {% include 'partials/popup.html' %}
         <div class="col col-lg-8 justify-content-center">
         <div class="card" style="border-radius:5px;">
             <div class="card body">
@@ -26,6 +27,7 @@
                                         {% endfor %}
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -43,22 +45,36 @@
                                 {% else %}
                                     <img src="{{profile.profile_pic}}" class="d-block img-fluid img-thumbnail rounded-circle mr-2" style="width:10%; height: 10%;" alt="">
                                 {% endif %}
-                                <div class="media-body ml-3 mt-1"> <a href="javascript:void(0)" data-abc="true">{{profile.username}}</a>
-                                    <div class="text-muted small mt-1">
-                                        {% if posts.duration.days == 0 %}
-                                            Posted: Today
-                                        {% elif posts.duration.days == 1 %}
-                                            Posted: Yesterday
-                                        {% else %}
-                                            Posted: {{posts.duration.days}} days ago
-                                        {% endif %}
+                                <div class="d-flex flex-row media-body ml-3 my-1"> 
+                                    <div class="flex-item">
+                                        <a href="javascript:void(0)" data-abc="true">{{profile.username}}</a>
+                                        <div class="text-muted small my-1">
+                                            {% if posts.duration.days == 0 %}
+                                                Posted: Today
+                                            {% elif posts.duration.days == 1 %}
+                                                Posted: Yesterday
+                                            {% else %}
+                                                Posted: {{posts.duration.days}} days ago
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="flex-item ml-auto p-2 btn-group">
+                                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        More
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                          <a href="{% url 'post-edit' posts.id %}" class="dropdown-item" type="button">Edit</a>
+                                          <button class="dropdown-item" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <h4 class="pb-1">{{posts.title}}</h4>
-                            <div class="flex-wrap text-small pb-2">
+                            <div class='row'>
+                                <h4 class="col col-lg-12 mb-2">{{posts.title}}</h4>
+                            </div>
+                            <div class="flex-wrap text-small pb-2 mt-2">
                                 {% for tag in posts.tags %}
                                     <a href="#" class="badge px-1 py-1" style="font-size:16px;">{{tag}}</a>
                                 {% endfor %}
