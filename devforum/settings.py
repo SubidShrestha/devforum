@@ -120,9 +120,9 @@ WSGI_APPLICATION = 'devforum.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': '',
+        'NAME': 'devforum',
+        'USER': 'root',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -209,8 +209,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-
+    os.path.join(BASE_DIR,'static/'),
 ]
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
@@ -223,3 +222,5 @@ CKEDITOR_UPLOAD_PATH="uploads/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+

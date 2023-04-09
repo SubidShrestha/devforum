@@ -12,14 +12,22 @@
                     <div class="row">
                         <div class="col-md-6 ml-auto mr-auto">
                             <div style="text-align:center;">
-                                <div class="avatar my-3">
+                                <div class="avatar dropright my-3">
+                                    <a href="javascript:void(0)" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     {% if profile.profile_pic %}
                                         <img src="{{profile.profile_pic}}" alt="" style="width: 40%;" class="rounded-circle">
                                     {% else %}
                                         <img src="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" class="rounded-circle" style="width:40%;" alt="">
                                     {% endif %}
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        {% if profile.profile_pic %}
+                                            <a class="dropdown-item" href="{{profile.profile_pic}}" target="_blank">View Profile Picture</a>
+                                        {% endif %}
+                                        <a class="dropdown-item" href="javascript:void(0)">Upload New Profile Picture</a>
+                                    </div>
                                 </div>
-                                <div class="d-block ml-2 justify-content-center">
+                                <div class="d-block ml-2 mb-3 justify-content-center">
                                     <h3 class="my-2">{{ profile.username }}</h3>
                                     <div>
                                         {% for tag in profile.tags %}

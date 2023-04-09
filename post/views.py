@@ -39,8 +39,7 @@ class PostListView(generics.ListCreateAPIView):
     queryset = Question.objects.all()
 
     def get_queryset(self):
-        recommended = recommend(self.request.user,Question.objects.all())
-        collab_recommend_items = collab_recommend(self.request.user,UpvoteQuestion.objects.all())
+        recommended = get_recommendations(self.request.user,Question.objects.all(),UpvoteQuestion.objects.all())
         query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user)).distinct()
         return query
 
