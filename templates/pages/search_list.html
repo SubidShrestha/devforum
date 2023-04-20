@@ -30,6 +30,10 @@
                                     {% endif %}
                                 </div>
                             </div>
+                        {% empty %}
+                        <div>
+                            <span>your search yielded no result</span>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -81,6 +85,10 @@
                                       <span href="#" class="text-muted d-inline-flex align-items-center align-middle ml-3"> <i class="fa fa-comments"></i>&nbsp; <span class="align-middle">{{questions.answers}}</span> </span> </div>
                                     <div class="px-4 pt-2"><a href="{% url 'post-reply' questions.id %}" class="btn btn-primary btn-sm">Answer<i class="fa fa-comment mx-2"></i></a> </div>
                                 </div>
+                            </div>
+                            {% empty %}
+                            <div>
+                                <span>your search yielded no result</span>
                             </div>
                         {% endfor %}
                     </div>

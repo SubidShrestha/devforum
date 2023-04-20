@@ -19,8 +19,8 @@ import json
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from utils.utils import *
 from django.db.models import Q
+from .recommender import HybridRecommender,SearchEngine
 
 class LogoutView(View):
     def dispatch(self, request, *args, **kwargs):
@@ -39,8 +39,10 @@ class PostListView(generics.ListCreateAPIView):
     queryset = Question.objects.all()
 
     def get_queryset(self):
-        recommended = get_recommendations(self.request.user,Question.objects.all(),UpvoteQuestion.objects.all())
-        query = Question.objects.filter(Q(pk__in = recommended) | Q(author = self.request.user)).distinct()
+        recommender = HybridRecommender()
+        recommendations = recommender.get_recommendations(self.request.user)
+        query = recommendations or Question.objects.filter(user = self.request.user)
+        query = query.distinct()
         return query
 
     def dispatch(self,request, *args, **kwargs):
@@ -65,9 +67,10 @@ class PostListView(generics.ListCreateAPIView):
         search_term = data.get('search')
         if search_term is None or search_term == '':
             return redirect(previous_url)
-        question = Question.objects.filter(Q(title__icontains=search_term) | Q(tags__name__icontains=search_term) | Q(author__username__icontains =search_term)).distinct()
+        searchEngine = SearchEngine()
+        searched_questions = searchEngine.search(search_term)
         user = User.objects.filter(Q(username__icontains=search_term) | Q(tags__name__icontains=search_term)).distinct()
-        question_serializer = self.serializer_class(question,many=True)
+        question_serializer = self.serializer_class(searched_questions,many=True)
         ordered_data = sorted(question_serializer.data, key=lambda x:(x['created_at'],x['upvotes']),reverse=True)
         user_serializer = UserSerializer(user.filter(is_superuser=False),many=True) 
         return Response({'question_list':ordered_data,'user_list':user_serializer.data,"tags": self.request.user.tags.all()},template_name='pages/search_list.html')
